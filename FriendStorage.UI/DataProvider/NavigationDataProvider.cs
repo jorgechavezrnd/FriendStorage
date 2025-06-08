@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace FriendStorage.UI.DataProvider
 {
-    internal class NavigationDataProvider : INavigationDataProvider
+    public class NavigationDataProvider : INavigationDataProvider
     {
         private Func<IDataService> _dataServiceCreator;
 
@@ -14,7 +14,7 @@ namespace FriendStorage.UI.DataProvider
             _dataServiceCreator = dataServiceCreator;
         }
 
-        public IEnumerable<Friend> GetAllFriends()
+        public IEnumerable<LookupItem> GetAllFriends()
         {
             using (var dataService = _dataServiceCreator())
             {
