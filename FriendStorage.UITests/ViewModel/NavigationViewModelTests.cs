@@ -1,6 +1,7 @@
 ﻿using FriendStorage.Model;
 using FriendStorage.UI.DataProvider;
 using FriendStorage.UI.ViewModel;
+using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -9,20 +10,33 @@ namespace FriendStorage.UITests.ViewModel
 {
     public class NavigationViewModelTests
     {
+        private NavigationViewModel _viewModel;
+
+        public NavigationViewModelTests()
+        {
+            var navigationDataProviderMock = new Mock<INavigationDataProvider>();
+            navigationDataProviderMock.Setup(dp => dp.GetAllFriends())
+                .Returns(new List<LookupItem>
+                {
+                    new LookupItem { Id = 1, DisplayMember = "Jorge" },
+                    new LookupItem { Id = 2, DisplayMember = "Carlos" }
+                });
+            _viewModel = new NavigationViewModel(
+                navigationDataProviderMock.Object);
+        }
+
         [Fact]
         public void ShouldLoadFriends()
         {
-            var viewModel = new NavigationViewModel(new NavigationDataProviderMock());
+            _viewModel.Load();
 
-            viewModel.Load();
+            Assert.Equal(2, _viewModel.Friends.Count);
 
-            Assert.Equal(2, viewModel.Friends.Count);
-
-            var friend = viewModel.Friends.SingleOrDefault(f => f.Id == 1);
+            var friend = _viewModel.Friends.SingleOrDefault(f => f.Id == 1);
             Assert.NotNull(friend);
             Assert.Equal("Jorge", friend.DisplayMember);
 
-            friend = viewModel.Friends.SingleOrDefault(f => f.Id == 2);
+            friend = _viewModel.Friends.SingleOrDefault(f => f.Id == 2);
             Assert.NotNull(friend);
             Assert.Equal("Carlos", friend.DisplayMember);
         }
@@ -30,22 +44,10 @@ namespace FriendStorage.UITests.ViewModel
         [Fact]
         public void ShouldLoadFriendsOnlyOnce()
         {
-            var viewModel = new NavigationViewModel(new NavigationDataProviderMock());
+            _viewModel.Load();
+            _viewModel.Load();
 
-            viewModel.Load();
-            viewModel.Load();
-
-            Assert.Equal(2, viewModel.Friends.Count);
-        }
-
-        public class NavigationDataProviderMock
-            : INavigationDataProvider
-        {
-            public IEnumerable<LookupItem> GetAllFriends()
-            {
-                yield return new LookupItem { Id = 1, DisplayMember = "Jorge" };
-                yield return new LookupItem { Id = 2, DisplayMember = "Carlos" };
-            }
+            Assert.Equal(2, _viewModel.Friends.Count);
         }
     }
 }
