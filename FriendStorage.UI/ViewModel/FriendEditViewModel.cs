@@ -2,6 +2,7 @@
 using FriendStorage.UI.DataProvider;
 using FriendStorage.UI.Wrapper;
 using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace FriendStorage.UI.ViewModel
@@ -40,6 +41,15 @@ namespace FriendStorage.UI.ViewModel
             var friend = _dataProvider.GetFriendById(friendId);
 
             Friend = new FriendWrapper(friend);
+
+            Friend.PropertyChanged += Friend_PropertyChanged;
+
+            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+        }
+
+        private void Friend_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
         }
 
         private void OnSaveExecute(object obj)
