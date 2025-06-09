@@ -1,13 +1,13 @@
 ﻿using FriendStorage.UI.Command;
 using FriendStorage.UI.Events;
 using Prism.Events;
-using System;
 using System.Windows.Input;
 
 namespace FriendStorage.UI.ViewModel
 {
-    public class NavigationItemViewModel
+    public class NavigationItemViewModel : ViewModelBase
     {
+        private string _displayMember;
         private IEventAggregator _eventAggregator;
 
         public NavigationItemViewModel(int id,
@@ -27,7 +27,16 @@ namespace FriendStorage.UI.ViewModel
         }
 
         public int Id { get; private set; }
-        public string DisplayMember { get; set; }
         public ICommand OpenFriendEditViewCommand { get; private set; }
+
+        public string DisplayMember
+        {
+            get => _displayMember;
+            set
+            {
+                _displayMember = value;
+                OnPropertyChanged();
+            }
+        }
     }
 }
