@@ -59,7 +59,7 @@ namespace FriendStorage.UITests.ViewModel
             const int friendId = 7;
             _openFriendEditViewEvent.Publish(friendId);
 
-            Assert.Equal(1, _viewModel.FriendEditViewModels.Count);
+            Assert.Single(_viewModel.FriendEditViewModels);
             var friendEditVm = _viewModel.FriendEditViewModels.First();
             Assert.Equal(friendEditVm, _viewModel.SelectedFriendEditViewModel);
             _friendEditViewModelMocks.First().Verify(vm => vm.Load(friendId), Times.Once);
