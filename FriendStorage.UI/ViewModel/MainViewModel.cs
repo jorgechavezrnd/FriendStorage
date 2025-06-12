@@ -1,4 +1,5 @@
-﻿using FriendStorage.UI.Command;
+﻿using FriendStorage.Model;
+using FriendStorage.UI.Command;
 using FriendStorage.UI.Events;
 using Prism.Events;
 using System;
@@ -22,6 +23,7 @@ namespace FriendStorage.UI.ViewModel
             _friendEditVmCreator = friendEditVmCreator;
             eventAggregator.GetEvent<OpenFriendEditViewEvent>().Subscribe(OnOpenFriendEditView);
             CloseFriendTabCommand = new DelegateCommand(OnCloseFriendTabExecute);
+            AddFriendCommand = new DelegateCommand(OnAddFriendExecute);
         }
 
         private void OnCloseFriendTabExecute(object obj)
@@ -30,18 +32,30 @@ namespace FriendStorage.UI.ViewModel
             FriendEditViewModels.Remove(friendEditVm);
         }
 
+        private void OnAddFriendExecute(object obj)
+        {
+            SelectedFriendEditViewModel = CreateAndLoadFriendEditViewModel(null);
+        }
+
+        private IFriendEditViewModel CreateAndLoadFriendEditViewModel(int? friendId)
+        {
+            var friendEditVm = _friendEditVmCreator();
+            FriendEditViewModels.Add(friendEditVm);
+            friendEditVm.Load(friendId);
+            return friendEditVm;
+        }
+
         private void OnOpenFriendEditView(int friendId)
         {
             var friendEditVm = FriendEditViewModels.SingleOrDefault(vm => vm.Friend.Id == friendId);
             if (friendEditVm == null)
             {
-                friendEditVm = _friendEditVmCreator();
-                FriendEditViewModels.Add(friendEditVm);
-                friendEditVm.Load(friendId);
+                friendEditVm = CreateAndLoadFriendEditViewModel(friendId);
             }
             SelectedFriendEditViewModel = friendEditVm;
         }
 
+        public ICommand AddFriendCommand { get; private set; }
         public ICommand CloseFriendTabCommand { get; private set; }
         public INavigationViewModel NavigationViewModel { get; private set; }
         public ObservableCollection<IFriendEditViewModel> FriendEditViewModels { get; private set; }
