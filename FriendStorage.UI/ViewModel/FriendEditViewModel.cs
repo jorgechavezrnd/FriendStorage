@@ -54,12 +54,18 @@ namespace FriendStorage.UI.ViewModel
 
             Friend.PropertyChanged += Friend_PropertyChanged;
 
-            ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            InvalidateCommands();
         }
 
         private void Friend_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            InvalidateCommands();
+        }
+
+        private void InvalidateCommands()
+        {
             ((DelegateCommand)SaveCommand).RaiseCanExecuteChanged();
+            ((DelegateCommand)DeleteCommand).RaiseCanExecuteChanged();
         }
 
         private void OnSaveExecute(object obj)
@@ -76,7 +82,7 @@ namespace FriendStorage.UI.ViewModel
 
         private void OnDeleteExecute(object obj)
         {
-            throw new NotImplementedException();
+            _dataProvider.DeleteFriend(Friend.Id);
         }
 
         private bool OnDeleteCanExecute(object arg)
